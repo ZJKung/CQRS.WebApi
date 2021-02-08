@@ -1,0 +1,31 @@
+using System.Threading.Tasks;
+using CQRS.WebApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CQRS.WebApi.Infrastructure.Context
+{
+    public class ApplicationContext : DbContext, IApplicationContext
+    {
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        {
+
+        }
+        public DbSet<Product> Products { get; set; }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await base.SaveChangesAsync();
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Product>()
+                .Property(p => p.BuyingPrice)
+                .HasPrecision(18, 4);
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Rate)
+                .HasPrecision(18, 4);
+        }
+
+    }
+}
